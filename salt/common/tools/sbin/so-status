@@ -174,6 +174,7 @@ print_line() {
     local service_state="$( parse_status ${1} ${2} )"
     local columns=$(tput cols)
     local state_color="\e[0m"
+    local reset_color="\e[0m"
 
     local PADDING_CONSTANT=15
 
@@ -191,10 +192,10 @@ print_line() {
 
     printf "    $service_name "
     for i in $(seq 0 $(( $columns - $PADDING_CONSTANT - ${#service_name} - ${#service_state} ))); do
-        printf "${state_color}%b\e[0m" "-"
+        printf "${state_color}%b${reset_color}" "-"
     done
     printf " [ "
-    printf "${state_color}%b\e[0m" "$service_state"
+    printf "${state_color}%b${reset_color}" "$service_state"
     printf "%s    \n" " ]"
 }
 
@@ -258,8 +259,9 @@ main() {
           print_or_parse="print_line"
 
           local focus_color="\e[1;34m"
+          local reset_color="\e[0m"
           printf "\n"
-          printf "${focus_color}%b\e[0m" "Checking Docker status\n\n"
+          printf "${focus_color}%b${reset_color}" "Checking Docker status\n\n"
       fi
 
       systemctl is-active --quiet docker
@@ -273,7 +275,7 @@ main() {
 
       if [ "$QUIET" = false ]; then
           printf "\n"
-          printf "${focus_color}%b\e[0m" "Checking container statuses\n\n"
+          printf "${focus_color}%b${reset_color}" "Checking container statuses\n\n"
       fi
 
       local num_containers=${#container_name_list[@]}
