@@ -189,6 +189,10 @@ print_line() {
         state_color="\e[1;33m"
         EXITCODE=2
     fi
+    if [[ -v NOCOLOR ]]; then
+        local state_color=""
+        local reset_color=""
+    fi
 
     printf "    $service_name "
     for i in $(seq 0 $(( $columns - $PADDING_CONSTANT - ${#service_name} - ${#service_state} ))); do
@@ -249,6 +253,9 @@ main() {
 
     # else if running from a terminal
     else
+      if ! check_color_output; then
+          NOCOLOR=true
+      fi
 
       if [ "$QUIET" = true ]; then
           if [ $SYSTEM_START_TIME -lt $LAST_SOSETUP_LOG ]; then
@@ -258,8 +265,13 @@ main() {
       else
           print_or_parse="print_line"
 
-          local focus_color="\e[1;34m"
-          local reset_color="\e[0m"
+          if [[ -v NOCOLOR ]]; then
+              local focus_color=""
+              local reset_color=""
+          else
+              local focus_color="\e[1;34m"
+              local reset_color="\e[0m"
+          fi
           printf "\n"
           printf "${focus_color}%b${reset_color}" "Checking Docker status\n\n"
       fi
