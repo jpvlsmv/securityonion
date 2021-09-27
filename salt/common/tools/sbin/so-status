@@ -20,6 +20,8 @@ if ! [ "$(id -u)" = 0 ]; then
    exit 1
 fi
 
+. /usr/sbin/so-common
+
 display_help() {
 cat <<HELP_USAGE
 
